@@ -1,0 +1,26 @@
+https://zod.dev/?id=introduction
+
+
+
+Axios - Biblioteca de requisições
+npm install axios
+
+Formas de uso
+1- Diretamente tipo fetch - passando a url
+2- Configurar uma instancia - baseurl - endpoint
+    
+    local para text api
+    https://jsonplaceholder.typicode.com/posts - Site de teste de apps
+
+    axios
+    https://axios-http.com/docs/intro - Biblioteca externa
+
+    Context
+    https://react.dev/reference/react/useContext - React
+
+
+Gerenciadores de estado
+ useState e useContext (nativos do React)
+ redux
+ zustend
+
