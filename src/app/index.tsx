@@ -14,12 +14,11 @@ export default function LoginScreen() {
    const router = useRouter();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('email@gmail.com');
+  const [password, setPassword] = useState('123456');
   const [errorMsg, setErrorMsg] = useState('');
 
-  function handleSubmit() {
-    //O que safeParse(...) faz?
+ function handleSubmit() {
     //O safeParse tenta validar os dados que você passa.
     const result = loginSchema.safeParse({ email, password });
 
@@ -28,15 +27,10 @@ export default function LoginScreen() {
       return;
     }
 
-    // Armazena o e-mail do usuário no estado global da aplicação
-    if (email === 'ddm@gmail.com' && password === '123456') {
-      login(email);
-      router.push('/profile');
-    } else {
-      setErrorMsg('Email ou senha incorretos.');
-      return;
-    }
-  }
+    // Permite qualquer email e senha válidos
+    login(email);
+    router.push('/home');
+}
 
   return (
     <View style={styles.container}>

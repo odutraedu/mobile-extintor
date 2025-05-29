@@ -1,7 +1,7 @@
 // hooks/useCRUD.ts
-import { AxiosRequestConfig } from 'axios';
-import { useState } from 'react';
-import { api } from '../app/libs/axios'; // ajuste conforme seu caminho
+import { AxiosRequestConfig } from "axios";
+import { useState } from "react";
+import { api } from "../app/libs/axios"; // ajuste conforme seu caminho
 
 export function useCRUD<T>(baseUrl: string) {
   const [loading, setLoading] = useState(false);
@@ -9,8 +9,8 @@ export function useCRUD<T>(baseUrl: string) {
   const [data, setData] = useState<T | T[] | null>(null);
 
   const handleRequest = async <D = any>(
-    method: 'get' | 'post' | 'put' | 'patch' | 'delete',
-    endpoint: string = '',
+    method: "get" | "post" | "put" | "patch" | "delete",
+    endpoint: string = "",
     payload?: D,
     config?: AxiosRequestConfig
   ) => {
@@ -20,9 +20,12 @@ export function useCRUD<T>(baseUrl: string) {
     try {
       const response = await api({
         method,
-        url: `${baseUrl}${endpoint ? `/${endpoint}` : ''}`,
+        url: `${baseUrl}${endpoint ? `/${endpoint}` : ""}`,
         data: payload,
-        ...config
+        headers: {
+          "x-api-token": "UNICORNIOcolorido123",
+        },
+        ...config,
       });
 
       setData(response.data);
@@ -35,12 +38,12 @@ export function useCRUD<T>(baseUrl: string) {
     }
   };
 
-  const getAll = () => handleRequest('get');
-  const getById = (id: number | string) => handleRequest('get', String(id));
-  const create = <D>(item: D) => handleRequest('post', '', item);
+  const getAll = () => handleRequest("get");
+  const getById = (id: number | string) => handleRequest("get", String(id));
+  const create = <D>(item: D) => handleRequest("post", "", item);
   const update = <D>(id: number | string, item: D) =>
-    handleRequest('put', String(id), item);
-  const remove = (id: number | string) => handleRequest('delete', String(id));
+    handleRequest("put", String(id), item);
+  const remove = (id: number | string) => handleRequest("delete", String(id));
 
   return {
     data, // Estado com os dados retornados da requisição (pode ser Cliente ou Cliente[]).
@@ -50,7 +53,6 @@ export function useCRUD<T>(baseUrl: string) {
     getById, // Função para buscar um Cliente pelo ID (GET).
     create, // Função para criar um novo Cliente (POST).
     update, // Função para atualizar um Cliente pelo ID (PUT).
-    remove // Função para deletar um Cliente pelo ID (DELETE).
-
+    remove, // Função para deletar um Cliente pelo ID (DELETE).
   };
 }

@@ -1,25 +1,27 @@
-import { useRouter, usePathname } from "expo-router";
+import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import TabBar from "./tabsBar";
 
 
-export default function ProfileScreen() {
+export default function HomeScreen() {
+  const router = useRouter();
   const { user } = useAuth();
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Image
-          source={{
-            uri: "https://ui-avatars.com/api/?name=" + (user?.email || "U"),
-          }}
-          style={styles.avatar}
+          //source={require("../assets/fire-extinguisher.png")}
+          style={styles.logo}
         />
-        <Text style={styles.text}>Bem-vindo,</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.title}>Bem-vindo ao App de Extintores</Text>
+        <Text style={styles.subtitle}>
+          Gerencie seus extintores de forma fácil e rápida!
+        </Text>
+        {user && <Text style={styles.userEmail}>Usuário: {user.email}</Text>}
       </View>
-    
+      
     </View>
   );
 }
@@ -45,22 +47,28 @@ const styles = StyleSheet.create({
     width: 320,
     marginBottom: 80,
   },
-  avatar: {
+  logo: {
     width: 80,
     height: 80,
-    borderRadius: 40,
     marginBottom: 16,
-    backgroundColor: "#E3E3E3",
+    resizeMode: "contain",
   },
-  text: {
-    fontSize: 22,
-    fontWeight: "600",
-    marginBottom: 4,
-    color: "#333",
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1976D2",
+    marginBottom: 8,
+    textAlign: "center",
   },
-  email: {
+  subtitle: {
     fontSize: 16,
-    color: "#666",
-    marginBottom: 24,
+    color: "#555",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  userEmail: {
+    fontSize: 14,
+    color: "#888",
+    marginTop: 8,
   },
 });
