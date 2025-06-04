@@ -1,25 +1,72 @@
-import { useRouter, usePathname } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useAuth } from "../hooks/useAuth";
-import TabBar from "./tabsBar";
-
 
 export default function ProfileScreen() {
   const { user } = useAuth();
+  const [nome, setNome] = useState(user?.email || "");  //precisa colocar o nome do usuário aqui
+  const [email, setEmail] = useState(user?.email || "");
+  const [senha, setSenha] = useState("");
+  const [editMode, setEditMode] = useState(false);
+
+  // Função fictícia para simular atualização local
+  function handleSave() {
+    // Aqui você pode chamar uma função de update real se tiver backend
+    Alert.alert("Sucesso", "Dados atualizados localmente!");
+    setEditMode(false);
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
         <Image
           source={{
-            uri: "https://ui-avatars.com/api/?name=" + (user?.email || "U"),
+            uri: "https://ui-avatars.com/api/?name=" + (nome || email || "U"),
           }}
           style={styles.avatar}
         />
         <Text style={styles.text}>Bem-vindo,</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        {editMode ? (
+          <>
+            <TextInput
+              style={styles.input}
+              value={nome}
+              onChangeText={setNome}
+              placeholder="Nome"
+            />
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              value={senha}
+              onChangeText={setSenha}
+              placeholder="Senha"
+              secureTextEntry
+            />
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveButtonText}>Salvar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setEditMode(false)}>
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text style={styles.info}>Nome: {nome}</Text>
+            <Text style={styles.info}>Email: {email}</Text>
+            <Text style={styles.info}>Senha: {senha.replace(/./g, "*")}</Text>
+            <TouchableOpacity style={styles.editButton} onPress={() => setEditMode(true)}>
+              <Text style={styles.editButtonText}>Alterar Dados</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
-    
     </View>
   );
 }
@@ -58,9 +105,56 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     color: "#333",
   },
-  email: {
+  info: {
     fontSize: 16,
     color: "#666",
-    marginBottom: 24,
+    marginBottom: 12,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    backgroundColor: "#FAFAFA",
+    fontSize: 16,
+    color: "#222",
+    width: 220,
+  },
+  editButton: {
+    backgroundColor: "#1976D2",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginTop: 16,
+  },
+  editButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  saveButton: {
+    backgroundColor: "#388E3C",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginTop: 8,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: "#888",
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginTop: 8,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

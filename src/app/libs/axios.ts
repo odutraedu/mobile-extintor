@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://10.120.6.81:3000", // ip dinamico
+  baseURL: "http://10.118.7.115:3000", // ip dinamico
 });
 
 api.interceptors.request.use(

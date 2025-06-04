@@ -1,7 +1,6 @@
-// hooks/useCRUD.ts
 import { AxiosRequestConfig } from "axios";
 import { useState } from "react";
-import { api } from "../app/libs/axios"; // ajuste conforme seu caminho
+import { api } from "../app/libs/axios"; // ajuste o caminho se necessário
 
 export function useCRUD<T>(baseUrl: string) {
   const [loading, setLoading] = useState(false);
@@ -24,11 +23,39 @@ export function useCRUD<T>(baseUrl: string) {
         data: payload,
         headers: {
           "x-api-token": "UNICORNIOcolorido123",
+          "Content-Type": "application/json",
         },
         ...config,
       });
 
-      setData(response.data);
+      if (method === "put" || method === "patch") {
+        setData((prev) => {
+          if (Array.isArray(prev)) {
+            return prev.map((item: any) =>
+              item.id === response.data.id ? response.data : item
+            );
+          }
+          return response.data;
+        });
+      } else if (method === "delete") {
+        setData((prev) => {
+          if (Array.isArray(prev)) {
+            // endpoint pode ser string, então convertemos para número para comparar com item.id
+            return prev.filter((item: any) => item.id !== Number(endpoint));
+          }
+          return null;
+        });
+      } else if (method === "post") {
+        setData((prev) => {
+          if (Array.isArray(prev)) {
+            return [...prev, response.data];
+          }
+          return [response.data];
+        });
+      } else {
+        setData(response.data);
+      }
+
       return response.data;
     } catch (err: any) {
       setError(err);
@@ -46,13 +73,13 @@ export function useCRUD<T>(baseUrl: string) {
   const remove = (id: number | string) => handleRequest("delete", String(id));
 
   return {
-    data, // Estado com os dados retornados da requisição (pode ser Cliente ou Cliente[]).
-    loading, // Booleano que indica se há uma requisição em andamento.
-    error, // Objeto de erro caso a requisição falhe.
-    getAll, // Função para buscar todos os Clientes (GET).
-    getById, // Função para buscar um Cliente pelo ID (GET).
-    create, // Função para criar um novo Cliente (POST).
-    update, // Função para atualizar um Cliente pelo ID (PUT).
-    remove, // Função para deletar um Cliente pelo ID (DELETE).
+    data,
+    loading,
+    error,
+    getAll,
+    getById,
+    create,
+    update,
+    remove,
   };
 }

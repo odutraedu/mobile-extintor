@@ -2,13 +2,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useAuth } from "../hooks/useAuth";
 
-export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
+export default function Index({ state, navigation }: BottomTabBarProps) {
   const { logout } = useAuth();
 
   const handleTab = (routeName: string, index: number) => {
     if (routeName === "logout") {
       logout();
-      navigation.navigate("home"); // Redireciona para "home" após logout
+      navigation.navigate("login"); // Agora navega para a tela de login (index)
     } else if (state.index !== index) {
       navigation.navigate(routeName);
     }
@@ -18,10 +18,13 @@ export default function CustomTabBar({ state, navigation }: BottomTabBarProps) {
     <View style={styles.tabBar}>
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
-        let label = "Home";
-        if (route.name === "components/extintor") label = "Extintor";
+        let label = "";
+        if (route.name === "components/extintor") label = "Cadastrar";
         else if (route.name === "profile") label = "Perfil";
-        else if (route.name === "index") label = "Início";
+        else if (route.name === "ListaExtintor") label = "Extintores";
+
+        // Só renderiza rotas conhecidas
+        if (!label) return null;
 
         return (
           <TouchableOpacity
