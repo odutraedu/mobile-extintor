@@ -1,9 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { z } from "zod";
 import { useAuth } from "../hooks/useAuth";
-import { useState } from "react";
+import { autenticarUsuario } from "../hooks/useUserAuth";
 
 // Defina ou importe o tipo RootStackParamList conforme seu projeto
 type RootStackParamList = {
@@ -21,27 +29,35 @@ const loginSchema = z.object({
 
 export default function LoginScreen() {
   const { login } = useAuth();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [email, setEmail] = useState('email@gmail.com');
-  const [password, setPassword] = useState('123456');
-  const [errorMsg, setErrorMsg] = useState('');
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const result = loginSchema.safeParse({ email, password });
 
     if (!result.success) {
-      setErrorMsg('Email inválido ou senha muito curta.');
+      setErrorMsg("Email inválido ou senha muito curta.");
       return;
     }
 
     setLoading(true);
-    login(email);
-
-    setTimeout(() => {
+    try {
+      const usuario = await autenticarUsuario(email, password);
+      // Salva nome e email no contexto global
+      login({ nome: usuario.nome, email: usuario.email });
       setLoading(false);
-      navigation.navigate("Tabs");
-    }, 3000);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Tabs" }],
+      });
+    } catch (e) {
+      setLoading(false);
+      setErrorMsg("Email ou senha inválidos");
+    }
   }
 
   function handleCadastroUsuario() {
@@ -52,10 +68,13 @@ export default function LoginScreen() {
     return (
       <View style={styles.container}>
         <Image
-          source={{ uri: "https://lh5.googleusercontent.com/proxy/OUqG0HgVNVMNorlPCmI4VgJa-3h7uHLkkMy9vdJ0eRsQlvJBytFUS-HvuW-O9EJd-c9xB7KAqlwby4Fzp59g1705FzBuP-F8dC1ZaBQtmLeCu5i6FfSd6Mmzh8mjOwgrEYZwy5UStg" }}
+          source={{
+            uri: "https://lh5.googleusercontent.com/proxy/OUqG0HgVNVMNorlPCmI4VgJa-3h7uHLkkMy9vdJ0eRsQlvJBytFUS-HvuW-O9EJd-c9xB7KAqlwby4Fzp59g1705FzBuP-F8dC1ZaBQtmLeCu5i6FfSd6Mmzh8mjOwgrEYZwy5UStg",
+          }}
           style={{ width: 200, height: 200, marginBottom: 20 }}
           resizeMode="contain"
         />
+
         <Text style={{ fontSize: 18, color: "#1976D2" }}>Entrando...</Text>
       </View>
     );
@@ -78,11 +97,14 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      {errorMsg !== '' && <Text style={styles.error}>{errorMsg}</Text>}
+      {errorMsg !== "" && <Text style={styles.error}>{errorMsg}</Text>}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.cadastroButton]} onPress={handleCadastroUsuario}>
+      <TouchableOpacity
+        style={[styles.button, styles.cadastroButton]}
+        onPress={handleCadastroUsuario}
+      >
         <Text style={styles.buttonText}>Cadastrar Usuário</Text>
       </TouchableOpacity>
     </View>
@@ -90,14 +112,19 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1, justifyContent: "center", alignItems: "center" },
+  container: {
+    padding: 20,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   input: { borderBottomWidth: 1, marginBottom: 10, padding: 8, width: 260 },
-  loginTitle: { 
-    fontSize: 24, 
-    marginBottom: 20, 
-    textAlign: "center", 
-    color: "#1976D2", 
-    fontWeight: "bold"
+  loginTitle: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#1976D2",
+    fontWeight: "bold",
   },
   title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
   error: { color: "red", marginBottom: 10 },

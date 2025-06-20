@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://10.118.7.115:3000", // ip dinamico
+  baseURL: "https://toledoextintores-production.up.railway.app", 
 });
 
 api.interceptors.request.use(

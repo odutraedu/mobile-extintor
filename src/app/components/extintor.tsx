@@ -1,6 +1,7 @@
 import { useCRUD } from "@/src/hooks/useCrud";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -8,7 +9,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 
 interface Extintor {
@@ -42,7 +42,8 @@ const Extintor = () => {
       if (!classe.trim()) throw new Error("A classe é obrigatória.");
       if (!preco || preco <= 0) throw new Error("Preço inválido.");
       if (!peso || peso <= 0) throw new Error("Peso inválido.");
-      if (!(validade instanceof Date) || isNaN(validade.getTime())) throw new Error("Validade inválida.");
+      if (!(validade instanceof Date) || isNaN(validade.getTime()))
+        throw new Error("Validade inválida.");
 
       await create({
         nome,
@@ -119,11 +120,11 @@ const Extintor = () => {
           )}
         </TouchableOpacity>
         {success && (
-          <Text style={styles.successText}>Extintor cadastrado com sucesso!</Text>
+          <Text style={styles.successText}>
+            Extintor cadastrado com sucesso!
+          </Text>
         )}
-        {error && (
-          <Text style={styles.errorText}>{error}</Text>
-        )}
+        {error && <Text style={styles.errorText}>{error}</Text>}
       </KeyboardAvoidingView>
     </View>
   );
@@ -132,6 +133,7 @@ const Extintor = () => {
 const styles = StyleSheet.create({
   title: {
     fontSize: 22,
+    marginTop: 32,
     fontWeight: "bold",
     color: "#1976D2",
     marginBottom: 16,

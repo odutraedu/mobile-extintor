@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useCRUD } from "@/src/hooks/useCrud";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  FlatList,
   ActivityIndicator,
+  Alert,
+  FlatList,
   StyleSheet,
   Text,
-  View,
-  TouchableOpacity,
-  Alert,
   TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useCRUD } from "@/src/hooks/useCrud";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 
 interface Extintor {
   id: number;
@@ -39,10 +37,13 @@ export default function ListaExtintor() {
   );
   const { user } = useAuth();
   const { data, loading, error, getAll } = useCRUD<Extintor>("extintor");
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [filtro, setFiltro] = useState("");
-  const [extintoresFiltrados, setExtintoresFiltrados] = useState<Extintor[]>([]);
+  const [extintoresFiltrados, setExtintoresFiltrados] = useState<Extintor[]>(
+    []
+  );
 
   useEffect(() => {
     getAll();
@@ -74,9 +75,10 @@ export default function ListaExtintor() {
       setExtintoresFiltrados(extintorData);
     } else {
       setExtintoresFiltrados(
-        extintorData.filter((item) =>
-          item.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-          item.classe.toLowerCase().includes(filtro.toLowerCase())
+        extintorData.filter(
+          (item) =>
+            item.nome.toLowerCase().includes(filtro.toLowerCase()) ||
+            item.classe.toLowerCase().includes(filtro.toLowerCase())
         )
       );
     }
@@ -105,7 +107,11 @@ export default function ListaExtintor() {
         placeholderTextColor="#888"
       />
       {loading ? (
-        <ActivityIndicator size="large" color="#1976D2" style={{ marginTop: 20 }} />
+        <ActivityIndicator
+          size="large"
+          color="#1976D2"
+          style={{ marginTop: 20 }}
+        />
       ) : error ? (
         <Text style={styles.errorText}>Erro ao carregar Extintores</Text>
       ) : (
@@ -113,7 +119,9 @@ export default function ListaExtintor() {
           data={extintoresFiltrados}
           style={{ width: "100%" }}
           contentContainerStyle={
-            extintoresFiltrados.length === 0 ? { flex: 1, justifyContent: "center" } : { paddingBottom: 40 }
+            extintoresFiltrados.length === 0
+              ? { flex: 1, justifyContent: "center" }
+              : { paddingBottom: 40 }
           }
           ListEmptyComponent={renderEmptyList}
           renderItem={({ item }) => {
@@ -121,15 +129,28 @@ export default function ListaExtintor() {
             const hoje = new Date();
             const isVencido = validade < hoje;
             return (
-              <TouchableOpacity onPress={() => handleDetail(item)} activeOpacity={0.7}>
-                <View style={[styles.extintorCard, isVencido && styles.extintorCardVencido]}>
+              <TouchableOpacity
+                onPress={() => handleDetail(item)}
+                activeOpacity={0.7}
+              >
+                <View
+                  style={[
+                    styles.extintorCard,
+                    isVencido && styles.extintorCardVencido,
+                  ]}
+                >
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.extintorNome}>{item.nome}</Text>
+                    <Text style={styles.extintorNome}>
+                      {item.nome}{" "}
+                      <Text style={styles.extintorNome}>#{item.id}</Text>
+                    </Text>
+                    
                     <Text style={styles.extintorInfo}>
                       <Text style={styles.label}>Classe:</Text> {item.classe}
                     </Text>
                     <Text style={styles.extintorInfo}>
-                      <Text style={styles.label}>Preço:</Text> R$ {item.preco?.toFixed(2)}
+                      <Text style={styles.label}>Preço:</Text> R${" "}
+                      {item.preco?.toFixed(2)}
                     </Text>
                     <Text style={styles.extintorInfo}>
                       <Text style={styles.label}>Peso:</Text> {item.peso} kg
@@ -146,7 +167,9 @@ export default function ListaExtintor() {
               </TouchableOpacity>
             );
           }}
-          keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
+          keyExtractor={(item) =>
+            item.id?.toString() || Math.random().toString()
+          }
         />
       )}
       {user && <Text style={styles.userEmail}>Usuário: {user.email}</Text>}
@@ -165,8 +188,8 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     alignItems: "flex-start",
-    marginBottom: 18,
-    marginTop: 8,
+    marginBottom: 12,
+    marginTop: 32,
   },
   title: {
     fontSize: 24,

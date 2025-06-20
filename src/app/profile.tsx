@@ -1,18 +1,30 @@
 import { useState } from "react";
-import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
 export default function ProfileScreen() {
   const { user } = useAuth();
-  const [nome, setNome] = useState(user?.email || "");  //precisa colocar o nome do usuário aqui
+  const [nome, setNome] = useState(user?.nome || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [senha, setSenha] = useState("");
   const [editMode, setEditMode] = useState(false);
 
   // Função fictícia para simular atualização local
   function handleSave() {
+    // Validação simples de email
+    if (!email.includes("@") || !email.includes(".com")) {
+      Alert.alert("Erro", "Digite um email válido contendo '@' e '.com'.");
+      return;
+    }
     // Aqui você pode chamar uma função de update real se tiver backend
-    Alert.alert("Sucesso", "Dados atualizados localmente!");
+    Alert.alert("Sucesso", "Dados atualizados com sucesso!");
     setEditMode(false);
   }
 
@@ -42,26 +54,24 @@ export default function ProfileScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            <TextInput
-              style={styles.input}
-              value={senha}
-              onChangeText={setSenha}
-              placeholder="Senha"
-              secureTextEntry
-            />
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>Salvar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => setEditMode(false)}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setEditMode(false)}
+            >
               <Text style={styles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
-            <Text style={styles.info}>Nome: {nome}</Text>
-            <Text style={styles.info}>Email: {email}</Text>
-            <Text style={styles.info}>Senha: {senha.replace(/./g, "*")}</Text>
-            <TouchableOpacity style={styles.editButton} onPress={() => setEditMode(true)}>
+            <Text style={styles.nome}>{nome}</Text>
+            <Text style={styles.email}>{email}</Text>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => setEditMode(true)}
+            >
               <Text style={styles.editButtonText}>Alterar Dados</Text>
             </TouchableOpacity>
           </>
@@ -156,5 +166,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  nome: {
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 8,
+    color: "#333",
+  },
+  email: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 12,
   },
 });

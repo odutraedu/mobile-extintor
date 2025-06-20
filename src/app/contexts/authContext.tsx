@@ -1,10 +1,10 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState } from "react";
 
-type User = { email: string };
+type User = { nome: string; email: string };
 
 type AuthContextType = {
   user: User | null;
-  login: (email: string) => void;
+  login: (user: User) => void;
   logout: () => void;
 };
 
@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   //Pense na user como uma caixa onde você guarda informações da pessoa logada.
   //O login() coloca o nome ou email dentro da caixa.
   //O logout() esvazia a caixa, ou seja, ninguém está logado.
-  const login = (email: string) => setUser({ email });
+  const login = (user: User) => setUser(user);
   const logout = () => setUser(null);
 
   //{children} é uma forma do React lidar com componentes filhos. Quando você escreve algo assim

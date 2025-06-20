@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Index({ state, navigation }: BottomTabBarProps) {
@@ -22,6 +22,9 @@ export default function Index({ state, navigation }: BottomTabBarProps) {
         if (route.name === "components/extintor") label = "Cadastrar";
         else if (route.name === "profile") label = "Perfil";
         else if (route.name === "ListaExtintor") label = "Extintores";
+        else if (route.name === "EstoqueExtintor") label = "Estoque";
+        else if (route.name === "VendasExtintor") label = "Vendas";
+        else if (route.name === "DashboardExtintor") label = "Dashboard";
 
         // Só renderiza rotas conhecidas
         if (!label) return null;
@@ -32,14 +35,22 @@ export default function Index({ state, navigation }: BottomTabBarProps) {
             style={[styles.tabButton, isFocused && styles.tabButtonActive]}
             onPress={() => handleTab(route.name, index)}
           >
-            <Text style={[styles.tabButtonText, isFocused && styles.tabButtonTextActive]}>
+            <Text
+              style={[
+                styles.tabButtonText,
+                isFocused && styles.tabButtonTextActive,
+              ]}
+            >
               {label}
             </Text>
           </TouchableOpacity>
         );
       })}
 
-      <TouchableOpacity style={styles.tabButton} onPress={() => handleTab("logout", -1)}>
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => handleTab("logout", -1)}
+      >
         <Text style={styles.tabButtonText}>Sair</Text>
       </TouchableOpacity>
     </View>

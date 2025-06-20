@@ -1,7 +1,15 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
-import { z } from "zod";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { z } from "zod";
+import { criarUsuario } from "../hooks/useUserAuth";
 
 const cadastroSchema = z.object({
   nome: z.string().min(2, "Nome obrigatório"),
@@ -25,10 +33,7 @@ export default function CadastroUsuario() {
     }
 
     try {
-      // Aqui você pode fazer uma requisição para sua API de cadastro, exemplo:
-      // await api.post("/usuarios", { nome, email, senha });
-
-      // Simulação de sucesso:
+      await criarUsuario(nome, email, senha);
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
       navigation.goBack();
     } catch (err) {
@@ -64,7 +69,10 @@ export default function CadastroUsuario() {
       <TouchableOpacity style={styles.button} onPress={handleCadastro}>
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.cancelButton}
+        onPress={() => navigation.goBack()}
+      >
         <Text style={styles.cancelButtonText}>Cancelar</Text>
       </TouchableOpacity>
     </View>
@@ -72,8 +80,20 @@ export default function CadastroUsuario() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 24, backgroundColor: "#F5F6FA" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 24, color: "#1976D2" },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 32,
+    padding: 24,
+    backgroundColor: "#F5F6FA",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
+    color: "#1976D2",
+  },
   input: {
     width: 260,
     borderWidth: 1,
